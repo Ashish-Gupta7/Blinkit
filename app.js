@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const expressSession = require("express-session");
+const cookieParser = require("cookie-parser");
 
 require("dotenv").config();
 require("./config/google-oauth-config");
@@ -21,12 +22,15 @@ app.use(
     saveUninitialized: true,
   })
 );
+app.use(cookieParser());
 
 const indexRouter = require("./routes/index");
 const authRouter = require("./routes/auth");
+const adminRouter = require("./routes/admin");
 
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
+app.use("/admin", adminRouter);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -19,35 +19,28 @@
                         <p class="text-xs text-gray-500">Shipment of 1 item</p>
                     </div>
                 </div>
-                <% cart.forEach(elem=> { %>
-                    <div class="flex items-center mt-4">
-                        <img src="data:image/jpg;base64, <%= elem.image.toString('base64') %>" alt="<%= elem.name %>"
-                            class="w-16 h-16 rounded">
-                        <div class="ml-4">
-                            <p>
-                                <%= elem.name %>
+                <div class="flex items-center mt-4">
+                    <img src="" class="w-16 h-16 rounded">
+                    <div class="ml-4">
+                        <p>
+                        </p>
+                        <p class="text-xs text-gray-500">170 g</p>
+                    </div>
+                    <div class="ml-auto">
+                        <div class="flex items-center justify-center bg-green-700 text-white rounded-md">
+                            <a href="" class="px-2 py-1 rounded"><i class="ri-subtract-line"></i></a>
+                            <p class="mx-2">
                             </p>
-                            <p class="text-xs text-gray-500">170 g</p>
+                            <button class="px-2 py-1 rounded"><i class="ri-add-line"></i></button>
                         </div>
-                        <div class="ml-auto">
-                            <div class="flex items-center justify-center bg-green-700 text-white rounded-md">
-                                <a href="/cart/remove/<%= elem._id %>" class="px-2 py-1 rounded"><i
-                                        class="ri-subtract-line"></i></a>
-                                <p class="mx-2">
-                                    <%= elem.quantity %>
-                                </p>
-                                <button class="px-2 py-1 rounded"><i class="ri-add-line"></i></button>
-                            </div>
-                            <div class="flex gap-2 mt-4">
-                                <p class="text-gray-500 line-through">₹<%= Number(elem.price)*Number(elem.quantity)+20
-                                        %>
-                                </p>
-                                <p>₹<%= Number(elem.price)*Number(elem.quantity)%>
-                                </p>
-                            </div>
+                        <div class="flex gap-2 mt-4">
+                            <p class="text-gray-500 line-through">₹
+                            </p>
+                            <p>₹
+                            </p>
                         </div>
                     </div>
-                    <% })%>
+                </div>
             </div>
 
             <!-- Before You Checkout -->
@@ -95,7 +88,7 @@
                 <div class="mt-2">
                     <div class="flex justify-between">
                         <p class="text-sm">Items total</p>
-                        <p class="text-sm">₹<%= finalprice - 34 %>
+                        <p class="text-sm">₹
                         </p>
                     </div>
                     <div class="flex justify-between">
@@ -108,7 +101,7 @@
                     </div>
                     <div class="flex justify-between font-bold mt-2">
                         <p class="text-lg">Grand total</p>
-                        <p class="text-lg">₹<%= finalprice %>
+                        <p class="text-lg">₹
                         </p>
                     </div>
                 </div>
@@ -177,7 +170,7 @@
                         <p class="text-xs text-gray-500">Paytm UPI</p>
                     </div>
                     <div>
-                        <p class="text-lg font-bold">₹<%= finalprice %>
+                        <p class="text-lg font-bold">₹
                         </p>
                         <button class="paybtn bg-green-700 text-white px-4 py-2 rounded">Place Order</button>
                     </div>
@@ -189,63 +182,6 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
             integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script>
-            document.querySelector('.paybtn').onclick = function (e) {
-                axios.post('/payment/create/orderId')
-                    .then(function (response) {
-                        var options = {
-                            "key": "rzp_test_cAa3gCF0eP8i4R", // Enter the Key ID generated from the Dashboard
-                            "amount": response.data.amount, // Amount in currency subunits. Default currency is INR.
-                            "currency": response.data.currency,
-                            "name": "BlinkIt",
-                            "description": "Test Transaction",
-                            "image": "https://example.com/your_logo",
-                            "order_id": response.data.id,
-                            "handler": function (response) {
-                                axios.post('/payment/api/payment/verify', {
-                                    razorpayOrderId: response.razorpay_order_id,
-                                    razorpayPaymentId: response.razorpay_payment_id,
-                                    signature: response.razorpay_signature
-                                })
-                                    .then(function (response) {
-                                        let { razorpayOrderId, razorpayPaymentId, signature } = JSON.parse(response.config.data)
-                                        window.location.href = `/order/<%= userid %>/${razorpayOrderId}/${razorpayPaymentId}/${signature}`
-                                    })
-                                    .catch(function (error) {
-                                        console.error(error);
-                                    });
-                            },
-                            "prefill": {
-                                "name": "Harsh Sharma",
-                                "email": "harsh.sharma@example.com",
-                                "contact": "9000090000"
-                            },
-                            "notes": {
-                                "address": "Razorpay Corporate Office"
-                            },
-                            "theme": {
-                                "color": "#3399cc"
-                            }
-                        };
-                        var rzp1 = new Razorpay(options);
-                        rzp1.on('payment.failed', function (response) {
-                            alert('Payment Failed');
-                            alert('Error Code: ' + response.error.code);
-                            alert('Description: ' + response.error.description);
-                            alert('Source: ' + response.error.source);
-                            alert('Step: ' + response.error.step);
-                            alert('Reason: ' + response.error.reason);
-                            alert('Order ID: ' + response.error.metadata.order_id);
-                            alert('Payment ID: ' + response.error.metadata.payment_id);
-                        });
-                        rzp1.open();
-                        e.preventDefault();
-                    })
-                    .catch(function (error) {
-                        console.error(error);
-                    });
-            };
-        </script>
     </body>
 
     <%- include('./partials/footer'); %>

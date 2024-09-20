@@ -22,7 +22,7 @@ const adminSchema = mongoose.Schema(
       required: true,
       select: false,
     },
-    roll: {
+    role: {
       type: String,
       required: true,
       enum: ["admin", "superadmin"],
