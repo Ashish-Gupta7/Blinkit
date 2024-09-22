@@ -13,4 +13,9 @@ function validateAdmin(req, res, next) {
   }
 }
 
-module.exports = validateAdmin;
+function userIsLoggedin(req, res, next) {
+  if (req.isAuthenticated()) return next();
+  res.redirect("/users/login");
+}
+
+module.exports = { validateAdmin, userIsLoggedin };

@@ -3,9 +3,9 @@ const app = express();
 const path = require("path");
 const expressSession = require("express-session");
 const cookieParser = require("cookie-parser");
+const passport = require("passport");
 
 require("dotenv").config();
-require("./config/google-oauth-config");
 require("./config/mongoose");
 const dbgr = require("debug")("development:App");
 
@@ -22,17 +22,27 @@ app.use(
     saveUninitialized: true,
   })
 );
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(cookieParser());
+require("./config/google-oauth-config");
 
 const indexRouter = require("./routes/index");
 const authRouter = require("./routes/auth");
 const adminRouter = require("./routes/admin");
+const productRouter = require("./routes/product");
+const categoryRouter = require("./routes/category");
+const userRouter = require("./routes/user");
 
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
 app.use("/admin", adminRouter);
+app.use("/products", productRouter);
+app.use("/categories", categoryRouter);
+app.use("/users", userRouter);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  dbgr(`Server is running on http://localhost:3000`);
+  dbgr(`Server is running on http://localhost:4000`);
 });

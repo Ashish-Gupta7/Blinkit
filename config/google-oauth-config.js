@@ -32,12 +32,19 @@ passport.use(
 );
 
 passport.serializeUser(function (user, cb) {
-  return cb(null, user._id);
+  cb(null, user._id);
 });
 
 passport.deserializeUser(async function (id, cb) {
-  let user = await userModel.findOne({ _id: id });
-  cb(null, user);
+  try {
+    let user = await userModel.findOne({ _id: id });
+    if (!user) {
+      return cb(new Error("User not found"), null);
+    }
+    cb(null, user);
+  } catch (err) {
+    cb(err, null);
+  }
 });
 
 module.exports = passport;

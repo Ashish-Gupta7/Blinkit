@@ -4,7 +4,9 @@ require("dotenv").config();
 const { adminModel } = require("../models/admin-model");
 const brcypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const validateAdmin = require("../middlewares/admin-middleware");
+const { validateAdmin } = require("../middlewares/admin-middleware");
+const { productModel } = require("../models/product-model");
+const { categoryModel } = require("../models/category-model");
 
 if (
   typeof process.env.NODE_ENV !== undefined &&
@@ -23,7 +25,10 @@ if (
 
           await user.save();
 
-          let token = jwt.sign({ email: user.email }, process.env.JWT_KEY);
+          let token = jwt.sign(
+            { email: user.email, admin: true },
+            process.env.JWT_KEY
+          );
           res.cookie("token", token);
           res.send(user);
         });
@@ -45,14 +50,47 @@ router.post("/login", async (req, res) => {
 
   let valid = await brcypt.compare(password, admin.password);
   if (valid) {
-    let token = jwt.sign({ email: admin.email }, process.env.JWT_KEY);
+    let token = jwt.sign(
+      { email: admin.email, admin: true },
+      process.env.JWT_KEY
+    );
     res.cookie("token", token);
     res.redirect("/admin/dashboard");
   }
 });
 
-router.get("/dashboard", validateAdmin, (req, res) => {
-  res.render("admin_dashboard");
+router.get("/dashboard", validateAdmin, async (req, res) => {
+  let prodCount = await productModel.countDocuments();
+  let categCount = await categoryModel.countDocuments();
+  res.render("admin_dashboard", { prodCount, categCount });
+});
+
+router.get("/products", validateAdmin, async (req, res) => {
+  let products = await productModel.find();
+  const result = await productModel.aggregate([
+    {
+      $group: {
+        _id: "$category",
+        products: {
+          $push: "$$ROOT",
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        category: "$_id",
+        products: { $slice: ["$products", 10] },
+      },
+    },
+  ]);
+
+  const resultObject = result.reduce((acc, item) => {
+    acc[item.category] = item.products;
+    return acc;
+  }, {});
+
+  res.render("admin_products", { products: resultObject });
 });
 
 router.get("/logout", validateAdmin, (req, res) => {
