@@ -19,28 +19,34 @@
                         <p class="text-xs text-gray-500">Shipment of 1 item</p>
                     </div>
                 </div>
-                <div class="flex items-center mt-4">
-                    <img src="" class="w-16 h-16 rounded">
-                    <div class="ml-4">
-                        <p>
-                        </p>
-                        <p class="text-xs text-gray-500">170 g</p>
-                    </div>
-                    <div class="ml-auto">
-                        <div class="flex items-center justify-center bg-green-700 text-white rounded-md">
-                            <a href="" class="px-2 py-1 rounded"><i class="ri-subtract-line"></i></a>
-                            <p class="mx-2">
+                <% cart.forEach(elm=> { %>
+                    <div class="flex items-center mt-4">
+                        <img src="data:image/jpg;base64, <%= elm.image.toString('base64') %>" class="w-16 h-16 rounded"
+                            alt="<%= elm.name %>">
+                        <div class="ml-4">
+                            <p>
+                                <%= elm.name %>
                             </p>
-                            <button class="px-2 py-1 rounded"><i class="ri-add-line"></i></button>
+                            <p class="text-xs text-gray-500">170 g</p>
                         </div>
-                        <div class="flex gap-2 mt-4">
-                            <p class="text-gray-500 line-through">₹
-                            </p>
-                            <p>₹
-                            </p>
+                        <div class="ml-auto">
+                            <div class="flex items-center justify-center bg-green-700 text-white rounded-md">
+                                <a href="/cart/remove/<%= elm._id %>" class="px-2 py-1 rounded"><i
+                                        class="ri-subtract-line"></i></a>
+                                <p class="mx-2">
+                                    <%= elm.quantity %>
+                                </p>
+                                <button class="px-2 py-1 rounded"><i class="ri-add-line"></i></button>
+                            </div>
+                            <div class="flex gap-2 mt-4">
+                                <p class="text-gray-500 line-through">₹ <%= Number(elm.price)*Number(elm.quantity)+20 %>
+                                </p>
+                                <p>₹ <%= Number(elm.price)*Number(elm.quantity) %>
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    <% }) %>
             </div>
 
             <!-- Before You Checkout -->
@@ -88,7 +94,7 @@
                 <div class="mt-2">
                     <div class="flex justify-between">
                         <p class="text-sm">Items total</p>
-                        <p class="text-sm">₹
+                        <p class="text-sm">₹ <%= finalPrice - 34 %>
                         </p>
                     </div>
                     <div class="flex justify-between">
@@ -101,7 +107,7 @@
                     </div>
                     <div class="flex justify-between font-bold mt-2">
                         <p class="text-lg">Grand total</p>
-                        <p class="text-lg">₹
+                        <p class="text-lg">₹ <%= finalPrice %>
                         </p>
                     </div>
                 </div>
@@ -170,7 +176,7 @@
                         <p class="text-xs text-gray-500">Paytm UPI</p>
                     </div>
                     <div>
-                        <p class="text-lg font-bold">₹
+                        <p class="text-lg font-bold">₹ <%= finalPrice %>
                         </p>
                         <button class="paybtn bg-green-700 text-white px-4 py-2 rounded">Place Order</button>
                     </div>

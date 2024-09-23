@@ -32,7 +32,7 @@ passport.use(
 );
 
 passport.serializeUser(function (user, cb) {
-  cb(null, user._id);
+  return cb(null, user._id);
 });
 
 passport.deserializeUser(async function (id, cb) {

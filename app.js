@@ -34,6 +34,7 @@ const adminRouter = require("./routes/admin");
 const productRouter = require("./routes/product");
 const categoryRouter = require("./routes/category");
 const userRouter = require("./routes/user");
+const cartRouter = require("./routes/cart");
 
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
@@ -41,6 +42,7 @@ app.use("/admin", adminRouter);
 app.use("/products", productRouter);
 app.use("/categories", categoryRouter);
 app.use("/users", userRouter);
+app.use("/cart", cartRouter);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

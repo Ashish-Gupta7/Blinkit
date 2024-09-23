@@ -3,9 +3,14 @@ const router = express.Router();
 const { productModel, productValidate } = require("../models/product-model");
 const { categoryModel } = require("../models/category-model");
 const upload = require("../config/multer-config");
-const { validateAdmin } = require("../middlewares/admin-middleware");
+const {
+  validateAdmin,
+  userIsLoggedin,
+} = require("../middlewares/admin-middleware");
+const { cartModel } = require("../models/cart-model");
 
-router.get("/", async function (req, res) {
+router.get("/", userIsLoggedin, async function (req, res) {
+  let somethingInCart = false;
   const result = await productModel.aggregate([
     {
       $group: {
@@ -24,6 +29,9 @@ router.get("/", async function (req, res) {
     },
   ]);
 
+  let cart = await cartModel.findOne({ user: req.session.passport.user });
+  if (cart && cart.products.length > 0) somethingInCart = true;
+
   let rnproducts = await productModel.aggregate([{ $sample: { size: 3 } }]);
 
   const resultObject = result.reduce((acc, item) => {
@@ -31,7 +39,12 @@ router.get("/", async function (req, res) {
     return acc;
   }, {});
 
-  res.render("index", { products: resultObject, rnproducts });
+  res.render("index", {
+    products: resultObject,
+    rnproducts,
+    somethingInCart,
+    cartCount: cart ? cart.products.length : 0,
+  });
 });
 
 router.get("/delete/:id", validateAdmin, async function (req, res) {

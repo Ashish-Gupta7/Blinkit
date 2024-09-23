@@ -14,7 +14,9 @@ function validateAdmin(req, res, next) {
 }
 
 function userIsLoggedin(req, res, next) {
-  if (req.isAuthenticated()) return next();
+  if (req.isAuthenticated()) {
+    return next();
+  }
   res.redirect("/users/login");
 }
 
