@@ -3,6 +3,10 @@ const Joi = require("joi");
 
 const orderSchema = mongoose.Schema(
   {
+    orderId: {
+      type: String,
+      required: true,
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
@@ -22,14 +26,11 @@ const orderSchema = mongoose.Schema(
     },
     address: {
       type: String,
-      required: true,
-      minlength: 5,
-      maxlength: 100,
     },
     status: {
       type: String,
       required: true,
-      enum: ["pending", "processed", "shipped", "delivered", "canceled"],
+      enum: ["pending", "processing", "shipped", "delivered", "canceled"],
     },
     payment: {
       type: mongoose.Schema.Types.ObjectId,
@@ -48,20 +49,20 @@ const orderSchema = mongoose.Schema(
 
 function orderValidate(data) {
   const schema = Joi.object({
-    user: Joi.string().length(24).required(),
-    products: Joi.array().items(Joi.string().length(24)).required(),
+    user: Joi.string().required(),
+    products: Joi.array().items(Joi.string()).required(),
     totalPrice: Joi.number().min(0).required(),
-    address: Joi.string().min(5).max(100).required(),
+    address: Joi.string(),
     status: Joi.string()
-      .valid("pending", "processed", "shipped", "delivered", "canceled")
+      .valid("pending", "processing", "shipped", "delivered", "canceled")
       .required(),
-    payment: Joi.string().length(24).required(),
-    delivery: Joi.string().length(24),
+    payment: Joi.string().required(),
+    delivery: Joi.string(),
   });
 
   return schema.validate(data);
 }
 
-const OrderModel = mongoose.model("order", orderSchema);
+const orderModel = mongoose.model("order", orderSchema);
 
-module.exports = { OrderModel, orderValidate };
+module.exports = { orderModel, orderValidate };

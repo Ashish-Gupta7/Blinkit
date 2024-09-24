@@ -5,4 +5,8 @@ router.get("/", (req, res) => {
   res.redirect("/products");
 });
 
+router.get("/map/:orderId", function (req, res) {
+  res.render("map", { orderId: req.params.orderId });
+});
+
 module.exports = router;

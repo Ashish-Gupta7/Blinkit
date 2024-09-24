@@ -30,7 +30,11 @@ router.get("/", userIsLoggedin, async (req, res) => {
     });
     let finalArray = Object.values(cartDataStructure);
     let finalPrice = cart.totalPrice + 34; // 30 for delivery charge and 4 for Handling charge
-    res.render("cart", { cart: finalArray, finalPrice });
+    res.render("cart", {
+      cart: finalArray,
+      finalPrice,
+      userId: req.session.passport.user,
+    });
   } catch (err) {
     res.send(err.message);
   }
